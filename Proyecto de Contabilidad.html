@@ -1,0 +1,1671 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Proyecto de Contabilidad</title>
+  <style>
+    :root {
+      --primary-color: #0052D4;
+      --secondary-color: #4364F7;
+      --accent-color: #6FB1FC;
+      --danger-color: #d32f2f;
+      --warning-color: #ff9800;
+      --success-color: #388e3c;
+      --text-color: #333;
+      --light-bg: #f4f7fa;
+      --card-bg: #fff;
+      --border-color: #ddd;
+      --shadow: 0 6px 15px rgba(0,0,0,0.1);
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background: var(--light-bg);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    header {
+      background: #0052D4;
+      color: white;
+      padding: 1.5rem;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      user-select: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    header img {
+      height: 150px !important;
+      margin-bottom: 1rem !important;
+      display: block;
+    }
+    header h1 {
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.9rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    main {
+      flex: 1;
+      max-width: 940px;
+      margin: 2rem auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      padding: 2rem;
+    }
+    label {
+      font-weight: 600;
+      margin-top: 1rem;
+      display: block;
+      color: #1a237e;
+    }
+    select, input[type="text"], input[type="number"], input[type="date"] {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      margin-top: 0.3rem;
+      border-radius: 6px;
+      border: 1.8px solid #ddd;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+    }
+    select:focus, input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus {
+      outline: none;
+      border-color: #4364F7;
+      box-shadow: 0 0 6px #a9c1ff;
+    }
+    button {
+      margin-top: 1.5rem;
+      cursor: pointer;
+      background: #4364F7;
+      color: white;
+      border: none;
+      padding: 0.7rem 1.3rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      transition: background-color 0.3s ease;
+      font-weight: 700;
+      user-select: none;
+    }
+    button:hover:not(:disabled) {
+      background: #2c4fc6;
+    }
+    button:disabled {
+      background: #a0a0a0;
+      cursor: not-allowed;
+    }
+    .section-title {
+      font-weight: 700;
+      color: #243763;
+      border-bottom: 2px solid #4364F7;
+      padding-bottom: 0.3rem;
+      margin-bottom: 0.5rem;
+      user-select: none;
+      font-size: 1.3rem;
+    }
+    .accounts-list ul {
+      list-style: none;
+      padding-left: 0;
+      margin-top: 1rem;
+      max-height: 140px;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background: #f8f9fc;
+    }
+    .accounts-list li {
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid #ddd;
+      user-select: none;
+    }
+    .accounts-list li:last-child {
+      border-bottom: none;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      user-select: none;
+    }
+    table th, table td {
+      padding: 0.5rem 0.8rem;
+      border: 1px solid #ccc;
+    }
+    table th {
+      background-color: #4364F7;
+      color: white;
+      font-weight: 700;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+    table tbody tr:nth-child(even) {
+      background: #f8f9fc;
+    }
+    table tfoot td {
+      background: #e1e7ff;
+      font-weight: 700;
+    }
+    .balance-sheet th {
+      background-color: #0052D4;
+      text-align: left;
+      color: white;
+      padding-left: 1rem;
+    }
+    .balance-sheet td {
+      text-align: right;
+    }
+    .form-group-inline {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .form-group-inline > * {
+      flex: 1 1 150px;
+    }
+    .asiento-container {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-top: 1rem;
+      padding: 1rem;
+      background: #eef4fb;
+      user-select: none;
+    }
+    .asiento-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.7rem;
+      user-select: none;
+    }
+    .asiento-header h3 {
+      margin: 0;
+      font-weight: 700;
+      color: #1a237e;
+    }
+    .cuentas-list {
+      max-height: 150px;
+      overflow-y: auto;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .cuentas-list table {
+      margin-top: 0;
+      font-size: 0.9rem;
+    }
+    .cuentas-list th, .cuentas-list td {
+      padding: 0.3rem 0.6rem;
+      border: 1px solid #ccc;
+    }
+    .cuentas-list th {
+      background: #4364F7;
+      color: white;
+    }
+    .indent {
+      padding-left: 20px;
+      font-family: monospace;
+    }
+    .buttons-group {
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    .buttons-group button {
+      flex: 1 1 180px;
+    }
+    .small-btn {
+      padding: 0.3rem 0.6rem;
+      font-size: 0.85rem;
+      border-radius: 5px;
+    }
+    .text-right {
+      text-align: right;
+    }
+    .error-msg {
+      color: #d32f2f;
+      user-select: none;
+      margin-top: 0.2rem;
+      font-size: 0.85rem;
+    }
+    .tabs {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .tab-btn {
+      padding: 0.7rem 1.5rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px 8px 0 0;
+      background: #e1e7ff;
+      color: #243763;
+      cursor: pointer;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .tab-btn.active {
+      background: #4364F7;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <img src="UMG.png" alt="Logo de la empresa" style="height: 90px; margin-bottom: 0.5rem;" />
+    <h1>Proyecto de Contabilidad UMG </h1>
+  </header>
+  <main>
+    <div class="tabs" style="display:flex;gap:1rem;margin-bottom:2rem;">
+      <button id="tab-balance-inicial" class="tab-btn active" type="button" style="padding:0.7rem 1.5rem;font-weight:700;border:none;border-radius:8px 8px 0 0;background:#4364F7;color:white;">Balance de Saldos Inicial</button>
+      <button id="tab-principal" class="tab-btn" type="button" style="padding:0.7rem 1.5rem;font-weight:700;border:none;border-radius:8px 8px 0 0;background:#e1e7ff;color:#243763;">Contabilidad</button>
+    </div>
+    <section id="section-balance-inicial" style="display:block;">
+      <!-- Balance de Saldos Inicial -->
+      <div class="section-title">Balance de Saldos Inicial</div>
+      <div class="form-group-inline">
+        <div>
+          <label for="initial-date">Fecha del Balance Inicial</label>
+          <input type="date" id="initial-date" />
+        </div>
+        <div style="flex:2;">
+          <label for="initial-desc">Descripción del Balance Inicial</label>
+          <input type="text" id="initial-desc" placeholder="Descripción del balance inicial" autocomplete="off" />
+        </div>
+      </div>
+      <div style="margin-top:1rem;">
+        <div class="section-title" style="font-size:1.1rem;">Agregar cuentas al balance inicial</div>
+        <div class="form-group-inline" style="align-items:flex-end;">
+          <div style="flex:2;">
+            <label for="initial-account-select">Cuenta</label>
+            <select id="initial-account-select">
+              <option value="" disabled selected>Selecciona cuenta</option>
+            </select>
+          </div>
+          <!-- Select opcional Debe/Haber -->
+          <div>
+            <label for="initial-side-select">Debe/Haber (opcional)</label>
+            <select id="initial-side-select">
+              <option value="" selected>Por naturaleza</option>
+              <option value="debe">Debe</option>
+              <option value="haber">Haber</option>
+            </select>
+          </div>
+          <div style="flex:2;">
+            <label for="initial-amount-input">Monto (Q)</label>
+            <input type="number" id="initial-amount-input" min="0.01" step="0.01" placeholder="0.00" />
+          </div>
+          <div>
+            <button id="add-initial-account-btn" disabled type="button">Agregar</button>
+          </div>
+        </div>
+        <div class="cuentas-list" id="initial-cuentas-list" style="margin-top: 0.7rem;">
+          <table>
+            <thead>
+              <tr>
+                <th>Cuenta</th>
+                <th>Tipo</th>
+                <th>Monto (Q)</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="initial-cuentas-tbody">
+              <tr><td colspan="4" style="text-align:center; font-style:italic;">No hay cuentas agregadas aún.</td></tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2" class="text-right">Total Debe:</td>
+                <td id="initial-total-debe" class="text-right">0.00</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td colspan="2" class="text-right">Total Haber:</td>
+                <td id="initial-total-haber" class="text-right">0.00</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td colspan="2" class="text-right">Diferencia:</td>
+                <td id="initial-diferencia" class="text-right">0.00</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <button id="save-initial-balance-btn" style="margin-top: 1rem;" disabled>Guardar Balance Inicial</button>
+      </div>
+    </section>
+    <section id="section-principal" style="display:none;">
+ 
+  
+      <section aria-label="Información de la empresa y periodo contable">
+      <div class="section-title">Información de la empresa y periodo contable</div>
+      <div class="form-group-inline">
+        <div>
+          <label for="company-name">Nombre de la Empresa</label>
+          <input type="text" id="company-name" placeholder="Ej. Mi Empresa S.A." autocomplete="off" />
+        </div>
+        <div>
+          <label for="period-name">Nombre del Periodo Contable</label>
+          <input type="text" id="period-name" placeholder="Ej. Enero 2025" autocomplete="off" />
+        </div>
+      </div>
+      <div class="form-group-inline">
+        <div>
+          <label for="period-start">Fecha Inicio</label>
+          <input type="date" id="period-start" />
+        </div>
+        <div>
+          <label for="period-end">Fecha Fin</label>
+          <input type="date" id="period-end" />
+        </div>
+      </div>
+    </section>
+    <section aria-label="Formulario para nuevo asiento contable" style="margin-top:2rem;">
+      <div class="section-title">Nuevo Asiento Contable</div>
+      <div class="form-group-inline">
+        <div>
+          <label for="asiento-date">Fecha del Asiento</label>
+          <input type="date" id="asiento-date" />
+          <div id="asiento-date-error" class="error-msg" role="alert" style="display:none;">Por favor, ingresa una fecha válida para el asiento.</div>
+        </div>
+        <div style="flex:2;">
+          <label for="asiento-desc">Descripción general del asiento</label>
+          <input type="text" id="asiento-desc" placeholder="Descripción del asiento contable" autocomplete="off" />
+        </div>
+      </div>
+      <div style="margin-top:1rem;">
+        <div class="section-title" style="font-size:1.1rem;">Agregar cuentas a este asiento</div>
+        <div class="form-group-inline" style="align-items:flex-end;">
+          <div style="flex:2;">
+            <label for="account-select">Cuenta</label>
+            <select id="account-select" aria-describedby="account-help">
+              <option value="" disabled selected>Selecciona cuenta</option>
+            </select>
+            <small id="account-help" style="user-select:none;"></small>
+          </div>
+          <div>
+            <label for="account-type-select">Tipo</label>
+            <select id="account-type-select">
+              <option value="" disabled selected>Selecciona tipo</option>
+              <option value="debe">Debe</option>
+              <option value="haber">Haber</option>
+            </select>
+          </div>
+          <div style="flex:2;">
+            <label for="amount-input">Monto (Q)</label>
+            <input type="number" id="amount-input" min="0.01" step="0.01" placeholder="0.00" />
+          </div>
+          <div>
+            <button id="add-account-btn" disabled title="Agregar cuenta al asiento" type="button">Agregar</button>
+          </div>
+        </div>
+        <div class="cuentas-list" id="cuentas-list" style="margin-top: 0.7rem;">
+          <table aria-label="Cuentas agregadas al asiento">
+            <thead>
+              <tr>
+                <th>Cuenta</th>
+                <th>Tipo</th>
+                <th>Monto (Q)</th>
+                <th>Acción</th>
+              </tr>
+            </thead>
+            <tbody id="cuentas-tbody">
+              <tr><td colspan="4" style="text-align:center; font-style:italic;">No hay cuentas agregadas aún.</td></tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="2" class="text-right">Total Debe:</td>
+                <td id="total-debe-seat" class="text-right">0.00</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td colspan="2" class="text-right">Total Haber:</td>
+                <td id="total-haber-seat" class="text-right">0.00</td>
+                <td></td>
+              </tr>
+              <tr>
+                <td colspan="2" class="text-right">Diferencia:</td>
+                <td id="diferencia-seat" class="text-right">0.00</td>
+                <td></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+        <button id="save-asiento-btn" style="margin-top: 1rem;" disabled>Guardar Asiento Contable Completo</button>
+      </div>
+    </section>
+    <section aria-label="Lista de asientos contables" style="margin-top: 2rem;">
+      <div class="section-title">Asientos Contables Guardados</div>
+      <div id="asientos-lista">
+        <p style="font-style: italic; user-select:none;" id="no-asientos-msg">No hay asientos guardados.</p>
+      </div>
+    </section>
+    <section aria-label="Lista de cuentas">
+      <div class="section-title">Cuentas Registradas</div>
+      <ul id="accounts-ul" aria-live="polite" aria-relevant="additions removals"></ul>
+      <form id="new-account-form" autocomplete="off" style="margin-top: 1rem; display: flex; gap: 1rem; align-items: flex-end;">
+        <div style="flex:2;">
+          <label for="new-account-input">Agregar Nueva Cuenta</label>
+          <input type="text" id="new-account-input" placeholder="Nombre de cuenta" autocomplete="off" />
+        </div>
+        <div>
+          <label for="new-account-type">Tipo</label>
+          <select id="new-account-type">
+            <option value="" disabled selected>Selecciona tipo</option>
+            <option value="Activo">Activo</option>
+            <option value="Pasivo">Pasivo</option>
+            <option value="Capital">Capital</option>
+            <option value="Ingreso">Ingreso</option>
+            <option value="Gasto">Gasto</option>
+          </select>
+        </div>
+        <button type="submit" id="btn-add-new-account">Agregar Cuenta</button>
+      </form>
+    </section>
+    <section aria-label="Balance general de activos y pasivos" style="margin-top: 2rem;">
+      <div class="section-title">Balance General</div>
+      <table class="balance-sheet" aria-describedby="balance-desc">
+        <caption id="balance-desc" style="visibility: collapse;">Balance general con totales de cuentas de activos y pasivos</caption>
+        <thead>
+        </thead>
+        <tbody id="balance-tbody"></tbody>
+        <tfoot>
+        </tfoot>
+      </table>
+    </section>
+    <section class="buttons-group" aria-label="Acciones generales" style="margin-top:2rem;">
+      <button id="export-btn">
+        <img src="logo excel.png" alt="Excel" style="height:3em;vertical-align:middle;margin-right:0.5em;">Exportar a Excel
+      </button>
+      <button id="clear-entries-btn" style="background:#d32f2f;">Limpiar Solo Asientos</button>
+      <button id="clear-all-btn" style="background:#b71c1c;">Limpiar Todo (Asientos y Cuentas)</button>
+      <button id="save-memory-btn" style="background:#388e3c;color:white;margin-left:1em;font-weight:700;border-radius:8px;padding:0.7rem 1.3rem;font-size:1rem;">Salvar Memoria</button>
+      <button id="import-memory-btn" style="background:#1976d2;color:white;margin-left:1em;font-weight:700;border-radius:8px;padding:0.7rem 1.3rem;font-size:1rem;">Restaurar Memoria</button>
+    </section>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script>
+  (() => {
+    const CLAVE_CUENTAS = 'conta_accounts';
+    const CLAVE_ASIENTOS = 'conta_entries';
+    const inputNombreEmpresa = document.getElementById('company-name');
+    const inputNombrePeriodo = document.getElementById('period-name');
+    const inputFechaInicio = document.getElementById('period-start');
+    const inputFechaFin = document.getElementById('period-end');
+    const inputFechaAsiento = document.getElementById('asiento-date');
+    const inputDescripcionAsiento = document.getElementById('asiento-desc');
+    const errorFechaAsiento = document.getElementById('asiento-date-error');
+    const selectCuenta = document.getElementById('account-select');
+    const selectTipoCuenta = document.getElementById('account-type-select');
+    const inputMonto = document.getElementById('amount-input');
+    const botonAgregarCuenta = document.getElementById('add-account-btn');
+    const tbodyCuentas = document.getElementById('cuentas-tbody');
+    const totalDebeElemento = document.getElementById('total-debe-seat');
+    const totalHaberElemento = document.getElementById('total-haber-seat');
+    const diferenciaElemento = document.getElementById('diferencia-seat');
+    const botonGuardarAsiento = document.getElementById('save-asiento-btn');
+    const listaAsientosElemento = document.getElementById('asientos-lista');
+    const mensajeSinAsientos = document.getElementById('no-asientos-msg');
+    const listaCuentasUl = document.getElementById('accounts-ul');
+    const tbodyBalance = document.getElementById('balance-tbody');
+    const totalActivoElemento = document.getElementById('total-activo');
+    const totalPasivoElemento = document.getElementById('total-pasivo');
+    const resultadoElemento = document.getElementById('resultado');
+    const botonExportar = document.getElementById('export-btn');
+    const botonLimpiarAsientos = document.getElementById('clear-entries-btn');
+    const botonLimpiarTodo = document.getElementById('clear-all-btn');
+    // Variables para balance inicial
+    const selectInitialAccount = document.getElementById('initial-account-select');
+    const inputInitialAmount = document.getElementById('initial-amount-input');
+    const selectInitialSide = document.getElementById('initial-side-select'); // NUEVO
+    const botonAgregarCuentaInicial = document.getElementById('add-initial-account-btn');
+    const tbodyCuentasInicial = document.getElementById('initial-cuentas-tbody');
+    const totalDebeInicialElemento = document.getElementById('initial-total-debe');
+    const totalHaberInicialElemento = document.getElementById('initial-total-haber');
+    const diferenciaInicialElemento = document.getElementById('initial-diferencia');
+    const botonGuardarBalanceInicial = document.getElementById('save-initial-balance-btn');
+    const inputFechaInicial = document.getElementById('initial-date');
+    const inputDescripcionInicial = document.getElementById('initial-desc');
+    let cuentas = [];
+    let asientos = [];
+    let detalleCuentasActual = [];
+    let detalleCuentasInicial = [];
+    let balanceInicial = null;
+    const formatearFechaDMY = (fechaISO) => new Date(fechaISO).toLocaleDateString('es-ES');
+    const cargarDatos = () => {
+      const cuentasGuardadas = localStorage.getItem(CLAVE_CUENTAS);
+      const asientosGuardados = localStorage.getItem(CLAVE_ASIENTOS);
+      cuentas = cuentasGuardadas ? JSON.parse(cuentasGuardadas) : [];
+      // Migración automática si hay datos antiguos (array de strings)
+      if (cuentas.length > 0 && typeof cuentas[0] === 'string') {
+        cuentas = cuentas.map(nombre => ({ nombre, tipo: 'Activo' }));
+        guardarDatos();
+      }
+      asientos = asientosGuardados ? JSON.parse(asientosGuardados) : [];
+    };
+    const guardarDatos = () => {
+      localStorage.setItem(CLAVE_CUENTAS, JSON.stringify(cuentas));
+      localStorage.setItem(CLAVE_ASIENTOS, JSON.stringify(asientos));
+    };
+    const inicializarCuentasPorDefecto = () => {
+      if(cuentas.length === 0) {
+        cuentas = [
+          { nombre: 'Caja', tipo: 'Activo' },
+          { nombre: 'Bancos', tipo: 'Activo' },
+          { nombre: 'Clientes', tipo: 'Activo' },
+          { nombre: 'Proveedores', tipo: 'Pasivo' },
+          { nombre: 'Ventas', tipo: 'Ingreso' },
+          { nombre: 'Compras', tipo: 'Gasto' },
+          { nombre: 'Capital', tipo: 'Capital' },
+          { nombre: 'Gastos', tipo: 'Gasto' }
+        ];
+        cuentas.sort((a, b) => a.nombre.localeCompare(b.nombre));
+      }
+    };
+    const llenarSelectCuentas = () => {
+      selectCuenta.innerHTML = '<option value="" disabled selected>Selecciona cuenta</option>';
+      cuentas.forEach(cuenta => {
+        const opcion = document.createElement('option');
+        opcion.value = cuenta.nombre;
+        opcion.textContent = `${cuenta.nombre} (${cuenta.tipo})`;
+        selectCuenta.appendChild(opcion);
+      });
+      // Para balance inicial
+      selectInitialAccount.innerHTML = '<option value="" disabled selected>Selecciona cuenta</option>';
+      cuentas.forEach(cuenta => {
+        const opcion = document.createElement('option');
+        opcion.value = cuenta.nombre;
+        opcion.textContent = `${cuenta.nombre} (${cuenta.tipo})`;
+        selectInitialAccount.appendChild(opcion);
+      });
+    };
+    const llenarListaCuentas = () => {
+      listaCuentasUl.innerHTML = '';
+      if (cuentas.length === 0) {
+        const elementoLista = document.createElement('li');
+        elementoLista.textContent = 'No hay cuentas registradas.';
+        elementoLista.style.fontStyle = 'italic';
+        listaCuentasUl.appendChild(elementoLista);
+        return;
+      }
+      cuentas.forEach((cuenta, idx) => {
+        const elementoLista = document.createElement('li');
+        elementoLista.textContent = `${cuenta.nombre} (${cuenta.tipo})`;
+
+        // Botón Editar
+        const btnEditar = document.createElement('button');
+        btnEditar.textContent = 'Editar';
+        btnEditar.className = 'small-btn';
+        btnEditar.style.marginLeft = '1em';
+        btnEditar.style.background = '#ff9800';
+        btnEditar.onclick = () => {
+          // Mostrar inputs para editar
+          elementoLista.innerHTML = '';
+          const inputNombre = document.createElement('input');
+          inputNombre.type = 'text';
+          inputNombre.value = cuenta.nombre;
+          inputNombre.style.marginRight = '0.5em';
+          const selectTipo = document.createElement('select');
+          ['Activo','Pasivo','Capital','Ingreso','Gasto'].forEach(tipo => {
+            const opt = document.createElement('option');
+            opt.value = tipo;
+            opt.textContent = tipo;
+            if (tipo === cuenta.tipo) opt.selected = true;
+            selectTipo.appendChild(opt);
+          });
+          selectTipo.style.marginRight = '0.5em';
+          const btnGuardar = document.createElement('button');
+          btnGuardar.textContent = 'Guardar';
+          btnGuardar.className = 'small-btn';
+          btnGuardar.style.background = '#388e3c';
+          btnGuardar.onclick = () => {
+            const nuevoNombre = inputNombre.value.trim();
+            const nuevoTipo = selectTipo.value;
+            if (nuevoNombre.length < 2) {
+              alert('El nombre debe tener al menos 2 caracteres.');
+              return;
+            }
+            if (cuentas.some((c, i) => i !== idx && c.nombre.toLowerCase() === nuevoNombre.toLowerCase())) {
+              alert('Ya existe una cuenta con ese nombre.');
+              return;
+            }
+            cuentas[idx].nombre = nuevoNombre;
+            cuentas[idx].tipo = nuevoTipo;
+            guardarDatos();
+            llenarSelectCuentas();
+            llenarListaCuentas();
+            renderizarBalance();
+            renderizarAsientos();
+            renderizarDetalleCuentas();
+            renderizarDetalleCuentasInicial();
+          };
+          const btnCancelar = document.createElement('button');
+          btnCancelar.textContent = 'Cancelar';
+          btnCancelar.className = 'small-btn';
+          btnCancelar.style.background = '#a0a0a0';
+          btnCancelar.onclick = () => llenarListaCuentas();
+          elementoLista.appendChild(inputNombre);
+          elementoLista.appendChild(selectTipo);
+          elementoLista.appendChild(btnGuardar);
+          elementoLista.appendChild(btnCancelar);
+        };
+
+        // Botón Eliminar
+        const btnEliminar = document.createElement('button');
+        btnEliminar.textContent = 'Eliminar';
+        btnEliminar.className = 'small-btn';
+        btnEliminar.style.marginLeft = '0.5em';
+        btnEliminar.style.background = '#d32f2f';
+        btnEliminar.onclick = () => {
+          if (confirm('¿Eliminar esta cuenta? Esta acción no se puede deshacer.')) {
+            cuentas.splice(idx, 1);
+            guardarDatos();
+            llenarSelectCuentas();
+            llenarListaCuentas();
+            renderizarBalance();
+            renderizarAsientos();
+            renderizarDetalleCuentas();
+            renderizarDetalleCuentasInicial();
+          }
+        };
+
+        elementoLista.appendChild(btnEditar);
+        elementoLista.appendChild(btnEliminar);
+        listaCuentasUl.appendChild(elementoLista);
+      });
+    };
+    const renderizarDetalleCuentas = () => {
+      tbodyCuentas.innerHTML = '';
+      if(detalleCuentasActual.length === 0) {
+        const fila = document.createElement('tr');
+        const celda = document.createElement('td');
+        celda.colSpan = 4;
+        celda.style.textAlign = 'center';
+        celda.style.fontStyle = 'italic';
+        celda.textContent = 'No hay cuentas agregadas aún.';
+        fila.appendChild(celda);
+        tbodyCuentas.appendChild(fila);
+        actualizarTotalesAsiento();
+        return;
+      }
+      detalleCuentasActual.forEach((cuenta, indice) => {
+        const fila = document.createElement('tr');
+        const celdaCuenta = document.createElement('td');
+        const celdaTipo = document.createElement('td');
+        const celdaMonto = document.createElement('td');
+        const celdaAccion = document.createElement('td');
+        celdaCuenta.textContent = cuenta.account;
+        celdaCuenta.classList.add('indent');
+        celdaTipo.textContent = (cuenta.type === 'debe') ? 'Debe' : 'Haber';
+        celdaMonto.textContent = `Q ${cuenta.amount.toFixed(2)}`;
+        const botonEliminar = document.createElement('button');
+        botonEliminar.textContent = 'Eliminar';
+        botonEliminar.classList.add('small-btn');
+        botonEliminar.type = 'button';
+        botonEliminar.style.background = '#d32f2f';
+        botonEliminar.style.padding = '0.25rem 0.5rem';
+        botonEliminar.addEventListener('click', () => {
+          detalleCuentasActual.splice(indice, 1);
+          renderizarDetalleCuentas();
+          validarBotonGuardarAsiento();
+        });
+        celdaAccion.appendChild(botonEliminar);
+        fila.appendChild(celdaCuenta);
+        fila.appendChild(celdaTipo);
+        fila.appendChild(celdaMonto);
+        fila.appendChild(celdaAccion);
+        tbodyCuentas.appendChild(fila);
+      });
+      actualizarTotalesAsiento();
+    };
+    const actualizarTotalesAsiento = () => {
+      let totalDebe = 0, totalHaber = 0;
+      detalleCuentasActual.forEach(cuenta => {
+        if(cuenta.type === 'debe') totalDebe += cuenta.amount;
+        else totalHaber += cuenta.amount;
+      });
+      totalDebeElemento.textContent = totalDebe.toFixed(2);
+      totalHaberElemento.textContent = totalHaber.toFixed(2);
+      const diferencia = totalDebe - totalHaber;
+      diferenciaElemento.textContent = diferencia.toFixed(2);
+      if(diferencia === 0 && detalleCuentasActual.length > 0 && inputDescripcionAsiento.value.trim() !== '' && inputFechaAsiento.value){
+        botonGuardarAsiento.disabled = false;
+      } else {
+        botonGuardarAsiento.disabled = true;
+      }
+    };
+    const validarInputsAgregarCuenta = () => {
+      const tipoCuenta = selectTipoCuenta.value;
+      const valido = selectCuenta.value && tipoCuenta && inputMonto.value && parseFloat(inputMonto.value) > 0;
+      botonAgregarCuenta.disabled = !valido;
+    };
+    [selectCuenta, selectTipoCuenta, inputMonto].forEach(el => el.addEventListener('input', validarInputsAgregarCuenta));
+    botonAgregarCuenta.addEventListener('click', e => {
+      e.preventDefault();
+      const cuenta = selectCuenta.value;
+      const tipo = selectTipoCuenta.value;
+      const monto = parseFloat(inputMonto.value);
+      if(!cuenta || !tipo || !monto || monto <= 0) return;
+      detalleCuentasActual.push({account: cuenta, type: tipo, amount: monto});
+      inputMonto.value = '';
+      selectCuenta.value = '';
+      selectTipoCuenta.value = '';
+      botonAgregarCuenta.disabled = true;
+      renderizarDetalleCuentas();
+    });
+    const validarInputsAsiento = () => {
+      let valido = true;
+      if(!inputFechaAsiento.value) {
+        errorFechaAsiento.style.display = 'block';
+        valido = false;
+      } else {
+        errorFechaAsiento.style.display = 'none';
+      }
+      if(inputDescripcionAsiento.value.trim() === '') {
+        valido = false;
+      }
+      actualizarTotalesAsiento();
+      return valido;
+    };
+    inputFechaAsiento.addEventListener('change', validarInputsAsiento);
+    inputDescripcionAsiento.addEventListener('input', validarInputsAsiento);
+    botonGuardarAsiento.addEventListener('click', () => {
+      if(!validarInputsAsiento()) {
+        alert('Por favor, completa la fecha y descripción del asiento y asegúrate de que el debe y haber estén balanceados.');
+        return;
+      }
+      const nuevoAsiento = {
+        id: Date.now(),
+        date: inputFechaAsiento.value,
+        description: inputDescripcionAsiento.value.trim(),
+        accounts: [...detalleCuentasActual]
+      };
+      asientos.push(nuevoAsiento);
+      guardarDatos();
+      renderizarAsientos();
+      limpiarInputsAsientoActual();
+      renderizarBalance();
+      alert('Asiento contable guardado con éxito.');
+    });
+    const limpiarInputsAsientoActual = () => {
+      inputFechaAsiento.value = '';
+      inputDescripcionAsiento.value = '';
+      detalleCuentasActual = [];
+      renderizarDetalleCuentas();
+      botonGuardarAsiento.disabled = true;
+    };
+    const renderizarAsientos = () => {
+      if (asientos.length === 0) {
+        mensajeSinAsientos.style.display = 'block';
+        listaAsientosElemento.innerHTML = '';
+        return;
+      }
+      mensajeSinAsientos.style.display = 'none';
+      listaAsientosElemento.innerHTML = '';
+      asientos.forEach((asiento, indice) => {
+        const div = document.createElement('div');
+        div.className = 'asiento-container';
+        const divEncabezado = document.createElement('div');
+        divEncabezado.className = 'asiento-header';
+        const h3 = document.createElement('h3');
+        h3.textContent = `Pda #${indice + 1}`;
+        const spanFecha = document.createElement('span');
+        spanFecha.textContent = formatearFechaDMY(asiento.date);
+        divEncabezado.appendChild(h3);
+        divEncabezado.appendChild(spanFecha);
+        const parrafoDescripcion = document.createElement('p');
+        parrafoDescripcion.style.fontStyle = 'italic';
+        parrafoDescripcion.textContent = asiento.description;
+        const tabla = document.createElement('table');
+        const thead = document.createElement('thead');
+        thead.innerHTML = `<tr><th>Cuenta</th><th>Debe (Q)</th><th>Haber (Q)</th></tr>`;
+        tabla.appendChild(thead);
+        const tbody = document.createElement('tbody');
+        let totalDebe = 0, totalHaber = 0;
+        asiento.accounts.forEach(cuenta => {
+          const fila = document.createElement('tr');
+          const celdaCuenta = document.createElement('td');
+          celdaCuenta.className = 'indent';
+          celdaCuenta.textContent = cuenta.account;
+          const celdaDebe = document.createElement('td');
+          const celdaHaber = document.createElement('td');
+          if(cuenta.type === 'debe') {
+            celdaDebe.textContent = cuenta.amount.toFixed(2);
+            celdaHaber.textContent = '';
+            totalDebe += cuenta.amount;
+          } else {
+            celdaDebe.textContent = '';
+            celdaHaber.textContent = cuenta.amount.toFixed(2);
+            totalHaber += cuenta.amount;
+          }
+          celdaDebe.style.textAlign = 'right';
+          celdaHaber.style.textAlign = 'right';
+          fila.appendChild(celdaCuenta);
+          fila.appendChild(celdaDebe);
+          fila.appendChild(celdaHaber);
+          tbody.appendChild(fila);
+        });
+        tabla.appendChild(tbody);
+        const tfoot = document.createElement('tfoot');
+        tfoot.innerHTML = `
+          <tr><td style="text-align:right;">Total</td><td style="text-align:right;">${totalDebe.toFixed(2)}</td><td style="text-align:right;">${totalHaber.toFixed(2)}</td></tr>
+        `;
+        tabla.appendChild(tfoot);
+        const botonEliminar = document.createElement('button');
+        botonEliminar.textContent = 'Eliminar Asiento';
+        botonEliminar.style.marginTop = '0.6rem';
+        botonEliminar.style.background = '#d32f2f';
+        botonEliminar.type = 'button';
+        botonEliminar.addEventListener('click', () => {
+          if(confirm('¿Eliminar este asiento? Esta acción no se puede deshacer.')) {
+            const indice = asientos.findIndex(a => a.id === asiento.id);
+            if(indice !== -1) {
+              asientos.splice(indice, 1);
+              guardarDatos();
+              renderizarAsientos();
+              renderizarBalance();
+            }
+          }
+        });
+        div.appendChild(divEncabezado);
+        div.appendChild(parrafoDescripcion);
+        div.appendChild(tabla);
+        div.appendChild(botonEliminar);
+        listaAsientosElemento.appendChild(div);
+      });
+    };
+    const renderizarBalance = () => {
+      const mapaBalance = {};
+      cuentas.forEach(c => { mapaBalance[c.nombre] = 0; });
+      asientos.forEach(asiento => {
+        asiento.accounts.forEach(cuenta => {
+          if(mapaBalance.hasOwnProperty(cuenta.account)) {
+            if(cuenta.type === 'debe') mapaBalance[cuenta.account] += cuenta.amount;
+            else mapaBalance[cuenta.account] -= cuenta.amount;
+          }
+        });
+      });
+      // Clasificación por tipo (mostrar todas las cuentas, incluso saldo 0)
+      const activos = [], pasivos = [], capital = [], ingresos = [], gastos = [];
+      cuentas.forEach(c => {
+        const saldo = mapaBalance[c.nombre] || 0;
+        if(c.tipo === 'Activo') activos.push({account: c.nombre, saldo});
+        else if(c.tipo === 'Pasivo') pasivos.push({account: c.nombre, saldo: Math.abs(saldo)});
+        else if(c.tipo === 'Capital') capital.push({account: c.nombre, saldo: Math.abs(saldo)});
+        else if(c.tipo === 'Ingreso') ingresos.push({account: c.nombre, saldo: Math.abs(saldo)});
+        else if(c.tipo === 'Gasto') gastos.push({account: c.nombre, saldo: Math.abs(saldo)});
+      });
+      // Estado de Resultados
+      let totalIngresos = ingresos.reduce((s, c) => s + c.saldo, 0);
+      let totalGastos = gastos.reduce((s, c) => s + c.saldo, 0);
+      let utilidadNeta = totalIngresos - totalGastos;
+      document.getElementById('er-ingresos').textContent = totalIngresos.toFixed(2);
+      document.getElementById('er-gastos').textContent = totalGastos.toFixed(2);
+      document.getElementById('er-utilidad').textContent = utilidadNeta.toFixed(2);
+      // Balance General Detallado
+      let totalActivo = activos.reduce((s, c) => s + c.saldo, 0);
+      let totalPasivo = pasivos.reduce((s, c) => s + c.saldo, 0);
+      let totalCapital = capital.reduce((s, c) => s + c.saldo, 0);
+      let pasivoCapital = totalPasivo + totalCapital;
+      document.getElementById('bg-activo').textContent = totalActivo.toFixed(2);
+      document.getElementById('bg-pasivo').textContent = totalPasivo.toFixed(2);
+      document.getElementById('bg-capital').textContent = totalCapital.toFixed(2);
+      document.getElementById('bg-pasivo-capital').textContent = pasivoCapital.toFixed(2);
+      const verificacion = Math.abs(totalActivo - pasivoCapital) < 0.01;
+      document.getElementById('bg-verificacion').textContent = verificacion ? 'Sí' : 'No';
+
+      // ADVERTENCIA SI NO SE CUMPLE LA ECUACIÓN
+      const warningDiv = document.getElementById('balance-warning');
+      if (!verificacion) {
+        warningDiv.style.display = 'block';
+        warningDiv.textContent = '⚠️ Advertencia: La ecuación básica contable no se cumple (Activo ≠ Pasivo + Capital). Revisa tus asientos o el balance inicial.';
+      } else {
+        warningDiv.style.display = 'none';
+        warningDiv.textContent = '';
+      }
+
+      let tbodyBalance = document.getElementById('balance-tbody');
+      tbodyBalance.innerHTML = '';
+      activos.sort((a,b) => a.account.localeCompare(b.account));
+      pasivos.sort((a,b) => a.account.localeCompare(b.account));
+      activos.forEach(activo => {
+        const fila = document.createElement('tr');
+        const celdaCuenta = document.createElement('td');
+        celdaCuenta.textContent = activo.account;
+        const celdaSaldo = document.createElement('td');
+        celdaSaldo.textContent = activo.saldo.toFixed(2);
+        celdaSaldo.style.textAlign = 'right';
+        fila.appendChild(celdaCuenta);
+        fila.appendChild(celdaSaldo);
+        tbodyBalance.appendChild(fila);
+      });
+      pasivos.forEach(pasivo => {
+        const fila = document.createElement('tr');
+        const celdaCuenta = document.createElement('td');
+        celdaCuenta.textContent = pasivo.account;
+        const celdaSaldo = document.createElement('td');
+        celdaSaldo.textContent = pasivo.saldo.toFixed(2);
+        celdaSaldo.style.textAlign = 'right';
+        fila.appendChild(celdaCuenta);
+        fila.appendChild(celdaSaldo);
+        tbodyBalance.appendChild(fila);
+      });
+      totalActivoElemento.textContent = totalActivo.toFixed(2);
+      totalPasivoElemento.textContent = totalPasivo.toFixed(2);
+      resultadoElemento.textContent = (totalActivo - totalPasivo).toFixed(2);
+    };
+
+    // =================== SECCIÓN: EXPORTACIÓN A EXCEL ===================
+    // Este bloque arma y exporta los libros: Diario, Mayor, Balance de Saldos y Balance Inicial
+    botonExportar.addEventListener('click', () => {
+      // Validaciones de campos obligatorios
+      if(inputNombreEmpresa.value.trim() === '') {
+        alert('Por favor, ingresa el nombre de la empresa.');
+        return;
+      }
+      if(inputNombrePeriodo.value.trim() === '') {
+        alert('Por favor, ingresa el nombre del periodo contable.');
+        return;
+      }
+      if(!inputFechaInicio.value || !inputFechaFin.value) {
+        alert('Por favor, indica el periodo contable (fecha inicio y fin).');
+        return;
+      }
+      if(inputFechaFin.value < inputFechaInicio.value) {
+        alert('La fecha fin no puede ser anterior a la fecha inicio.');
+        return;
+      }
+      if(asientos.length === 0) {
+        alert('No hay asientos guardados para exportar.');
+        return;
+      }
+      const fechaInicio = new Date(inputFechaInicio.value);
+      const fechaFin = new Date(inputFechaFin.value);
+      fechaFin.setHours(23,59,59,999);
+      const asientosFiltrados = asientos.filter(asiento => {
+        const fecha = new Date(asiento.date);
+        return fecha >= fechaInicio && fecha <= fechaFin;
+      });
+      if(asientosFiltrados.length === 0) {
+        alert('No hay asientos dentro del periodo seleccionado.');
+        return;
+      }
+
+      // ========== BALANCE INICIAL ==========
+      // Lee y parsea el balance inicial, soportando doble serialización
+      const initialBalance = localStorage.getItem('conta_initial_balance');
+      let datosBalanceInicial = [];
+      if(initialBalance) {
+        let bi = initialBalance;
+        if (typeof bi === 'string') {
+          try {
+            bi = JSON.parse(bi);
+            if (typeof bi === 'string') {
+              bi = JSON.parse(bi);
+            }
+          } catch (e) { bi = null; }
+        }
+        if (bi && (bi.cuentas || bi.accounts)) {
+          datosBalanceInicial.push([
+            {v: 'BALANCE DE SALDOS INICIAL', s: {font: {bold: true, sz: 18}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'center'}}}
+          ]);
+          datosBalanceInicial.push([
+            {v: `Empresa: ${inputNombreEmpresa.value.trim()}`, s: {font: {bold: true, sz: 14}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+          ]);
+          datosBalanceInicial.push([
+            {v: `Fecha: ${(bi.fecha || bi.date) || ''}`, s: {font: {bold: true, sz: 12}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+          ]);
+          datosBalanceInicial.push([
+            {v: 'Cifras en quetzales', s: {font: {bold: true, sz: 12}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+          ]);
+          datosBalanceInicial.push([]);
+          datosBalanceInicial.push(['No.', 'Cuenta', 'Debe', 'Haber']);
+          let totalDebe = 0, totalHaber = 0, numCuenta = 1;
+          (bi.cuentas || bi.accounts).forEach(c => {
+            let esDebe = false;
+            if (c.side === 'debe') esDebe = true;
+            else if (c.side === 'haber') esDebe = false;
+            else if (c.type === 'Activo' || c.type === 'Gasto' || c.type === 'debe') esDebe = true;
+            else if (c.type === 'Pasivo' || c.type === 'Capital' || c.type === 'Ingreso' || c.type === 'haber') esDebe = false;
+            if (esDebe) {
+              datosBalanceInicial.push([
+                numCuenta++,
+                c.account,
+                c.amount.toFixed(2),
+                ''
+              ]);
+              totalDebe += c.amount;
+            } else {
+              datosBalanceInicial.push([
+                numCuenta++,
+                c.account,
+                '',
+                c.amount.toFixed(2)
+              ]);
+              totalHaber += c.amount;
+            }
+          });
+          datosBalanceInicial.push(['', 'Total Debe', totalDebe.toFixed(2), '']);
+          datosBalanceInicial.push(['', 'Total Haber', '', totalHaber.toFixed(2)]);
+          datosBalanceInicial.push(['', 'Diferencia', (totalDebe-totalHaber).toFixed(2), '']);
+        }
+      }
+
+      // ========== LIBRO DIARIO ==========
+      // Arma el libro diario con los asientos filtrados
+      let datosLibroDiario = [];
+      datosLibroDiario.push([
+        {v: 'LIBRO DIARIO', s: {font: {bold: true, sz: 18}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'center'}}}
+      ]);
+      datosLibroDiario.push([
+        {v: `Empresa: ${inputNombreEmpresa.value.trim()}`, s: {font: {bold: true, sz: 14}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+      ]);
+      datosLibroDiario.push([
+        {v: `Fecha: ${inputFechaInicio.value} a ${inputFechaFin.value}`, s: {font: {bold: true, sz: 12}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+      ]);
+      datosLibroDiario.push([
+        {v: 'Cifras en quetzales', s: {font: {bold: true, sz: 12}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+      ]);
+      datosLibroDiario.push([]);
+      datosLibroDiario.push([
+        {v: 'Partida', s: {font: {bold: true}, fill: {fgColor: {rgb: 'FFD9D9D9'}}}},
+        {v: 'Cuenta / Fecha', s: {font: {bold: true}, fill: {fgColor: {rgb: 'FFD9D9D9'}}}},
+        {v: 'Debe', s: {font: {bold: true}, fill: {fgColor: {rgb: 'FFD9D9D9'}}}},
+        {v: 'Haber', s: {font: {bold: true}, fill: {fgColor: {rgb: 'FFD9D9D9'}}}}
+      ]);
+      let numeroPartida = 1;
+      let totalDebeGlobal = 0;
+      let totalHaberGlobal = 0;
+      asientosFiltrados.forEach(asiento => {
+        const cuentasDebe = asiento.accounts.filter(c => c.type === 'debe');
+        const cuentasHaber = asiento.accounts.filter(c => c.type === 'haber');
+        const cuentasOrdenadas = [].concat(cuentasDebe, cuentasHaber);
+        const totalDebePartida = cuentasOrdenadas.reduce((s,v) => s + (v.type==='debe'?v.amount:0),0);
+        const totalHaberPartida = cuentasOrdenadas.reduce((s,v) => s + (v.type==='haber'?v.amount:0),0);
+        datosLibroDiario.push([
+          {v: `Pda #${numeroPartida}`, s: {font: {bold: true}}},
+          {v: new Date(asiento.date).toLocaleDateString('es-ES'), s: {font: {bold: true}, alignment: {horizontal: 'center'}}},
+          '',
+          ''
+        ]);
+        cuentasOrdenadas.forEach(c => {
+          let fila = ['', '', '', ''];
+          fila[1] = c.type === 'debe' 
+            ? {v: c.account, s: {alignment: {indent: 2}}} 
+            : c.account;
+          if (c.type === 'debe') {
+            fila[2] = c.amount.toFixed(2);
+            fila[3] = '';
+          } else {
+            fila[2] = '';
+            fila[3] = c.amount.toFixed(2);
+          }
+          datosLibroDiario.push(fila);
+        });
+        datosLibroDiario.push(['', 'Totales', totalDebePartida.toFixed(2), totalHaberPartida.toFixed(2)]);
+        datosLibroDiario.push(['', asiento.description, '', '']);
+        datosLibroDiario.push([]);
+        totalDebeGlobal += totalDebePartida;
+        totalHaberGlobal += totalHaberPartida;
+        numeroPartida++;
+      });
+      datosLibroDiario.push([]);
+      datosLibroDiario.push(['', 'TOTAL DEBE', totalDebeGlobal.toFixed(2), '']);
+      datosLibroDiario.push(['', 'TOTAL HABER', '', totalHaberGlobal.toFixed(2)]);
+      datosLibroDiario.push(['', 'DIFERENCIA', (totalDebeGlobal-totalHaberGlobal).toFixed(2), '']);
+
+      // ========== BALANCE DE SALDOS ==========
+      // Calcula el saldo final de cada cuenta y arma la hoja de balance de saldos
+      let mapaBalance = {};
+      cuentas.forEach(nombreCuenta => {
+        let saldo = 0;
+        if(initialBalance) {
+          let bi = initialBalance;
+          if (typeof bi === 'string') {
+            try {
+              bi = JSON.parse(bi);
+              if (typeof bi === 'string') {
+                bi = JSON.parse(bi);
+              }
+            } catch (e) { bi = null; }
+          }
+          if (bi && (bi.cuentas || bi.accounts)) {
+            const cuentaBI = (bi.cuentas || bi.accounts).find(c =>
+              c.account && c.account.trim().toLowerCase() === nombreCuenta.nombre.trim().toLowerCase()
+            );
+            if (cuentaBI) {
+              if (cuentaBI.side === 'debe' || (!cuentaBI.side && (cuentaBI.type === 'Activo' || cuentaBI.type === 'Gasto' || cuentaBI.type === 'debe'))) {
+                saldo += cuentaBI.amount;
+              } else if (cuentaBI.side === 'haber' || (!cuentaBI.side && (cuentaBI.type === 'Pasivo' || cuentaBI.type === 'Capital' || cuentaBI.type === 'Ingreso' || cuentaBI.type === 'haber'))) {
+                saldo -= cuentaBI.amount;
+              }
+            }
+          }
+        }
+        asientosFiltrados.forEach(asiento => {
+          asiento.accounts.forEach(cuenta => {
+            if (cuenta.account && cuenta.account.trim().toLowerCase() === nombreCuenta.nombre.trim().toLowerCase()) {
+              saldo += (cuenta.type === 'debe' ? cuenta.amount : -cuenta.amount);
+            }
+          });
+        });
+        mapaBalance[nombreCuenta.nombre] = saldo;
+      });
+      let datosBalance = [];
+      datosBalance.push([
+        {v: 'LIBRO BALANCE DE SALDOS', s: {font: {bold: true, sz: 18}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'center'}}}
+      ]);
+      datosBalance.push([
+        {v: `Empresa: ${inputNombreEmpresa.value.trim()}`, s: {font: {bold: true, sz: 14}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+      ]);
+      datosBalance.push([
+        {v: `Fecha: ${inputFechaInicio.value} a ${inputFechaFin.value}`, s: {font: {bold: true, sz: 12}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+      ]);
+      datosBalance.push([
+        {v: 'Cifras en quetzales', s: {font: {bold: true, sz: 12}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+      ]);
+      datosBalance.push([]);
+      datosBalance.push(['No.', 'Cuenta', 'Debe', 'Haber']);
+      let totalDebe = 0, totalHaber = 0, numCuenta = 1;
+      cuentas.forEach(cuenta => {
+        const saldo = mapaBalance[cuenta.nombre] || 0;
+        if (saldo > 0) {
+          totalDebe += saldo;
+          datosBalance.push([
+            numCuenta++,
+            cuenta.nombre,
+            saldo.toFixed(2),
+            ''
+          ]);
+        } else if (saldo < 0) {
+          totalHaber += Math.abs(saldo);
+          datosBalance.push([
+            numCuenta++,
+            cuenta.nombre,
+            '',
+            Math.abs(saldo).toFixed(2)
+          ]);
+        } else {
+          datosBalance.push([
+            numCuenta++,
+            cuenta.nombre,
+            '',
+            ''
+          ]);
+        }
+      });
+      datosBalance.push(['', 'Totales', totalDebe.toFixed(2), totalHaber.toFixed(2)]);
+
+      // ========== LIBRO MAYOR ==========
+      // Arma el libro mayor con movimientos por cuenta
+      let datosLibroMayor = [];
+      datosLibroMayor.push([
+        {v: 'LIBRO MAYOR', s: {font: {bold: true, sz: 18}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'center'}}}
+      ]);
+      datosLibroMayor.push([
+        {v: `Empresa: ${inputNombreEmpresa.value.trim()}`, s: {font: {bold: true, sz: 14}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+      ]);
+      datosLibroMayor.push([
+        {v: `Fecha: ${inputFechaInicio.value} a ${inputFechaFin.value}`, s: {font: {bold: true, sz: 12}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+      ]);
+      datosLibroMayor.push([
+        {v: 'Cifras en quetzales', s: {font: {bold: true, sz: 12}, fill: {fgColor: {rgb: 'FFD9D9D9'}}, alignment: {horizontal: 'left'}}}
+      ]);
+      datosLibroMayor.push([]);
+      cuentas.forEach(nombreCuenta => {
+        let saldo = 0;
+        let movimientos = [];
+        let partidaNum = 1;
+        // Balance inicial como primer movimiento
+        if(initialBalance) {
+          let bi = initialBalance;
+          if (typeof bi === 'string') {
+            try {
+              bi = JSON.parse(bi);
+              if (typeof bi === 'string') {
+                bi = JSON.parse(bi);
+              }
+            } catch (e) { bi = null; }
+          }
+          if (bi && (bi.cuentas || bi.accounts)) {
+            const cuentaBI = (bi.cuentas || bi.accounts).find(c =>
+              c.account && c.account.trim().toLowerCase() === nombreCuenta.nombre.trim().toLowerCase()
+            );
+            if (cuentaBI) {
+              let debe = '', haber = '';
+              if (cuentaBI.side === 'debe' || (!cuentaBI.side && (cuentaBI.type === 'Activo' || cuentaBI.type === 'Gasto' || cuentaBI.type === 'debe'))) {
+                debe = cuentaBI.amount;
+                saldo += cuentaBI.amount;
+              } else if (cuentaBI.side === 'haber' || (!cuentaBI.side && (cuentaBI.type === 'Pasivo' || cuentaBI.type === 'Capital' || cuentaBI.type === 'Ingreso' || cuentaBI.type === 'haber'))) {
+                haber = cuentaBI.amount;
+                saldo -= cuentaBI.amount;
+              }
+              movimientos.push([
+                bi.fecha || bi.date,
+                'Balance Inicial',
+                bi.descripcion || bi.description,
+                debe !== '' ? parseFloat(debe).toFixed(2) : '',
+                haber !== '' ? parseFloat(haber).toFixed(2) : '',
+                saldo.toFixed(2)
+              ]);
+            }
+          }
+        }
+        asientosFiltrados.forEach(asiento => {
+          asiento.accounts.forEach(cuenta => {
+            if (cuenta.account === nombreCuenta.nombre) {
+              let debe = cuenta.type === 'debe' ? cuenta.amount : '';
+              let haber = cuenta.type === 'haber' ? cuenta.amount : '';
+              saldo += (cuenta.type === 'debe' ? cuenta.amount : -cuenta.amount);
+              movimientos.push([
+                new Date(asiento.date).toLocaleDateString('es-ES'),
+                `Pda #${partidaNum}`,
+                asiento.description,
+                debe !== '' ? debe.toFixed(2) : '',
+                haber !== '' ? haber.toFixed(2) : '',
+                saldo.toFixed(2)
+              ]);
+            }
+          });
+          partidaNum++;
+        });
+        if (movimientos.length > 0) {
+          datosLibroMayor.push([
+            {v: `Cuenta: ${nombreCuenta.nombre}`, s: {font: {bold: true, sz: 14}, fill: {fgColor: {rgb: 'FFD9D9D9'}}}}
+          ]);
+          datosLibroMayor.push(['Fecha', 'Partida', 'Descripción', 'Debe', 'Haber', 'Saldo']);
+          movimientos.forEach(mov => datosLibroMayor.push(mov));
+          let sumaDebe = movimientos.reduce((s, m) => s + (parseFloat(m[3]) || 0), 0);
+          let sumaHaber = movimientos.reduce((s, m) => s + (parseFloat(m[4]) || 0), 0);
+          let saldoFinal = movimientos.length > 0 ? movimientos[movimientos.length-1][5] : '0.00';
+          datosLibroMayor.push([
+            '', '', {v: 'Totales', s: {font: {bold: true}, fill: {fgColor: {rgb: 'FFE0E0E0'}}}},
+            {v: sumaDebe.toFixed(2), s: {font: {bold: true}, fill: {fgColor: {rgb: 'FFE0E0E0'}}}},
+            {v: sumaHaber.toFixed(2), s: {font: {bold: true}, fill: {fgColor: {rgb: 'FFE0E0E0'}}}},
+            {v: saldoFinal, s: {font: {bold: true}, fill: {fgColor: {rgb: 'FFE0E0E0'}}}}
+          ]);
+          datosLibroMayor.push([]);
+        } else {
+          datosLibroMayor.push([
+            {v: `Cuenta: ${nombreCuenta.nombre}`, s: {font: {bold: true, sz: 14}, fill: {fgColor: {rgb: 'FFD9D9D9'}}}}
+          ]);
+          datosLibroMayor.push(['Fecha', 'Partida', 'Descripción', 'Debe', 'Haber', 'Saldo']);
+          datosLibroMayor.push(['', '', 'Sin movimientos', '', '', '0.00']);
+          datosLibroMayor.push([]);
+        }
+      });
+
+      // ========== GENERAR Y GUARDAR ARCHIVO ==========
+      // Crea el libro Excel y agrega las hojas
+      const libroExcel = XLSX.utils.book_new();
+      if(datosBalanceInicial.length > 0) {
+        const hojaBalanceInicial = XLSX.utils.aoa_to_sheet(datosBalanceInicial);
+        XLSX.utils.book_append_sheet(libroExcel, hojaBalanceInicial, 'Balance Inicial');
+      }
+      const hojaDiario = XLSX.utils.aoa_to_sheet(datosLibroDiario);
+      const hojaMayor = XLSX.utils.aoa_to_sheet(datosLibroMayor);
+      const hojaBalance = XLSX.utils.aoa_to_sheet(datosBalance);
+      XLSX.utils.book_append_sheet(libroExcel, hojaDiario, 'Libro Diario');
+      XLSX.utils.book_append_sheet(libroExcel, hojaMayor, 'Libro Mayor');
+      XLSX.utils.book_append_sheet(libroExcel, hojaBalance, 'Libro Balance de Saldos');
+      const nombreArchivo = `Informe_${inputNombreEmpresa.value.trim().replace(/\s+/g,'_')}_${inputNombrePeriodo.value.trim().replace(/\s+/g,'_')}.xlsx`;
+      XLSX.writeFile(libroExcel, nombreArchivo);
+    });
+    botonLimpiarAsientos.addEventListener('click', () => {
+      if(!confirm('¿Estás seguro que deseas limpiar TODOS LOS ASIENTOS? Esta acción no se puede deshacer.')) return;
+      asientos = [];
+      guardarDatos();
+      renderizarAsientos();
+      renderizarBalance();
+      alert('Se han borrado todos los asientos.');
+    });
+    botonLimpiarTodo.addEventListener('click', () => {
+      if(!confirm('¿Estás seguro que deseas LIMPIAR TODO, incluyendo cuentas y asientos? Esta acción no se puede deshacer.')) return;
+      cuentas = [];
+      asientos = [];
+      guardarDatos();
+      inicializarCuentasPorDefecto();
+      guardarDatos();
+      llenarSelectCuentas();
+      llenarListaCuentas();
+      renderizarAsientos();
+      renderizarBalance();
+      alert('Se ha limpiado todo y restablecido las cuentas por defecto.');
+    });
+    // --- BOTÓN PARA EXPORTAR DATOS COMO MEMORIA (JSON) ---
+    const botonSalvar = document.createElement('button');
+    botonSalvar.id = 'save-memory-btn';
+    botonSalvar.textContent = 'Salvar Memoria';
+    botonSalvar.style.background = '#388e3c';
+    botonSalvar.style.color = 'white';
+    botonSalvar.style.marginLeft = '1em';
+    botonSalvar.style.fontWeight = '700';
+    botonSalvar.style.borderRadius = '8px';
+    botonSalvar.style.padding = '0.7rem 1.3rem';
+    botonSalvar.style.fontSize = '1rem';
+    botonSalvar.addEventListener('click', () => {
+      const datos = {
+        cuentas,
+        asientos,
+        balanceInicial: localStorage.getItem('conta_initial_balance')
+      };
+      const blob = new Blob([JSON.stringify(datos, null, 2)], {type: 'application/json'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `contabilidad_memoria_${(inputNombreEmpresa.value||'').replace(/\s+/g,'_')}_${(inputNombrePeriodo.value||'').replace(/\s+/g,'_')}.json`;
+      document.body.appendChild(a);
+      a.click();
+      setTimeout(() => {
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 100);
+    });
+    // Insertar el botón junto a los de exportar y limpiar
+    const grupoBotones = document.querySelector('.buttons-group');
+    if (grupoBotones) grupoBotones.insertBefore(botonSalvar, grupoBotones.firstChild);
+    // --- BOTÓN PARA IMPORTAR MEMORIA (JSON) ---
+    const botonImportar = document.createElement('button');
+    botonImportar.id = 'import-memory-btn';
+    botonImportar.textContent = 'Restaurar Memoria';
+    botonImportar.style.background = '#1976d2';
+    botonImportar.style.color = 'white';
+    botonImportar.style.marginLeft = '1em';
+    botonImportar.style.fontWeight = '700';
+    botonImportar.style.borderRadius = '8px';
+    botonImportar.style.padding = '0.7rem 1.3rem';
+    botonImportar.style.fontSize = '1rem';
+    botonImportar.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'application/json';
+      input.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          try {
+            const datos = JSON.parse(event.target.result);
+            if (!datos.cuentas || !datos.asientos) {
+              alert('Archivo inválido.');
+              return;
+            }
+            cuentas = datos.cuentas;
+            asientos = datos.asientos;
+            if (datos.balanceInicial) {
+              localStorage.setItem('conta_initial_balance', datos.balanceInicial);
+            }
+            guardarDatos();
+            llenarSelectCuentas();
+            llenarListaCuentas();
+            renderizarAsientos();
+            renderizarBalance();
+            renderizarDetalleCuentas();
+            renderizarDetalleCuentasInicial();
+            cargarBalanceInicial();
+            alert('¡Memoria restaurada correctamente!');
+          } catch (err) {
+            alert('Error al leer el archivo.');
+          }
+        };
+        reader.readAsText(file);
+      });
+      input.click();
+    });
+    // Insertar el botón junto a los de exportar y limpiar
+    if (grupoBotones) grupoBotones.insertBefore(botonImportar, botonSalvar.nextSibling);
+    const validarBotonGuardarAsiento = () => {
+      actualizarTotalesAsiento();
+    };
+    // Tabs para mostrar/ocultar secciones
+    const tabBalance = document.getElementById('tab-balance-inicial');
+    const tabPrincipal = document.getElementById('tab-principal');
+    const sectionBalance = document.getElementById('section-balance-inicial');
+    const sectionPrincipal = document.getElementById('section-principal');
+    tabBalance.addEventListener('click', () => {
+      tabBalance.classList.add('active');
+      tabPrincipal.classList.remove('active');
+      tabBalance.style.background = '#4364F7';
+      tabBalance.style.color = 'white';
+      tabPrincipal.style.background = '#e1e7ff';
+      tabPrincipal.style.color = '#243763';
+      sectionBalance.style.display = 'block';
+      sectionPrincipal.style.display = 'none';
+    });
+    tabPrincipal.addEventListener('click', () => {
+      tabPrincipal.classList.add('active');
+      tabBalance.classList.remove('active');
+      tabPrincipal.style.background = '#4364F7';
+      tabPrincipal.style.color = 'white';
+      tabBalance.style.background = '#e1e7ff';
+      tabBalance.style.color = '#243763';
+      sectionPrincipal.style.display = 'block';
+      sectionBalance.style.display = 'none';
+    });
+    function cargarBalanceInicial() {
+  const data = localStorage.getItem('conta_initial_balance');
+  if (!data) return;
+  try {
+    const balance = JSON.parse(data);
+    if (!balance.cuentas || !Array.isArray(balance.cuentas)) return;
+    // Mostrar las cuentas del balance inicial en la tabla
+    detalleCuentasInicial = [...balance.cuentas];
+    renderizarDetalleCuentasInicial();
+    // Rellenar fecha y descripción si están vacíos
+    if (inputFechaInicial && balance.fecha) inputFechaInicial.value = balance.fecha;
+    if (inputDescripcionInicial && balance.descripcion) inputDescripcionInicial.value = balance.descripcion;
+    validarBotonGuardarBalanceInicial();
+  } catch (e) {
+    // Si hay error, limpiar
+    localStorage.removeItem('conta_initial_balance');
+  }
+}
+    const inicializar = () => {
+      cargarDatos();
+      inicializarCuentasPorDefecto();
+      guardarDatos();
+      llenarSelectCuentas();
+      llenarListaCuentas();
+      renderizarAsientos();
+      renderizarBalance();
+      renderizarDetalleCuentas();
+      renderizarDetalleCuentasInicial();
+      cargarBalanceInicial(); // <-- Asegura que se cargue el balance inicial guardado
+      validarBotonGuardarAsiento();
+      botonAgregarCuenta.disabled = true;
+      botonGuardarAsiento.disabled = true;
+    };
+    [selectCuenta, inputMonto].forEach(el => el.addEventListener('input', validarInputsAgregarCuenta));
+    inputFechaAsiento.addEventListener('change', () => {
+      if (!inputFechaAsiento.value) errorFechaAsiento.style.display = 'block';
+      else errorFechaAsiento.style.display = 'none';
+      validarBotonGuardarAsiento();
+    });
+    inputDescripcionAsiento.addEventListener('input', validarBotonGuardarAsiento);
+    document.getElementById('new-account-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const valor = document.getElementById('new-account-input').value.trim();
+      const tipo = document.getElementById('new-account-type').value;
+      if(valor.length < 2) {
+        alert('El nombre de la cuenta debe tener al menos 2 caracteres.');
+        return;
+      }
+      if(!tipo) {
+        alert('Debes seleccionar el tipo de cuenta.');
+        return;
+      }
+      if(cuentas.some(c => c.nombre.toLowerCase() === valor.toLowerCase())) {
+        alert('La cuenta ya existe.');
+        return;
+      }
+      cuentas.push({ nombre: valor, tipo: tipo });
+      cuentas.sort((a, b) => a.nombre.localeCompare(b.nombre));
+      guardarDatos();
+      llenarSelectCuentas();
+      llenarListaCuentas();
+      document.getElementById('new-account-input').value = '';
+      document.getElementById('new-account-type').value = '';
+    });
+    // --- LÓGICA PARA AGREGAR CUENTAS AL BALANCE INICIAL ---
+const validarInputsAgregarCuentaInicial = () => {
+  const cuenta = selectInitialAccount.value;
+  const monto = inputInitialAmount.value && parseFloat(inputInitialAmount.value) > 0;
+  botonAgregarCuentaInicial.disabled = !(cuenta && monto);
+};
+selectInitialAccount.addEventListener('change', validarInputsAgregarCuentaInicial);
+inputInitialAmount.addEventListener('input', validarInputsAgregarCuentaInicial);
+selectInitialSide.addEventListener('change', validarInputsAgregarCuentaInicial); // NUEVO
+
+botonAgregarCuentaInicial.addEventListener('click', e => {
+  e.preventDefault();
+  const cuenta = selectInitialAccount.value;
+  const monto = parseFloat(inputInitialAmount.value);
+  const side = selectInitialSide.value; // "debe", "haber" o ""
+  if (!cuenta || !monto || monto <= 0) return;
+  // Buscar tipo de cuenta
+  const tipo = (cuentas.find(c => c.nombre === cuenta) || {}).tipo || '';
+  detalleCuentasInicial.push({ account: cuenta, type: tipo, amount: monto, side: side });
+  inputInitialAmount.value = '';
+  selectInitialAccount.value = '';
+  selectInitialSide.value = '';
+  botonAgregarCuentaInicial.disabled = true;
+  renderizarDetalleCuentasInicial();
+  validarBotonGuardarBalanceInicial();
+});
+
+const renderizarDetalleCuentasInicial = () => {
+  tbodyCuentasInicial.innerHTML = '';
+  if (detalleCuentasInicial.length === 0) {
+    const fila = document.createElement('tr');
+    const celda = document.createElement('td');
+    celda.colSpan = 4;
+    celda.style.textAlign = 'center';
+    celda.style.fontStyle = 'italic';
+    celda.textContent = 'No hay cuentas agregadas aún.';
+    fila.appendChild(celda);
+    tbodyCuentasInicial.appendChild(fila);
+    actualizarTotalesBalanceInicial();
+    return;
+  }
+  detalleCuentasInicial.forEach((cuenta, indice) => {
+    const fila = document.createElement('tr');
+    const celdaCuenta = document.createElement('td');
+    const celdaTipo = document.createElement('td');
+    const celdaMonto = document.createElement('td');
+       const celdaAccion = document.createElement('td');
+    celdaCuenta.textContent = cuenta.account;
+    // Mostrar si fue forzado o por naturaleza
+    celdaTipo.textContent = cuenta.side
+      ? (cuenta.side === 'debe' ? 'Debe (forzado)' : 'Haber (forzado)')
+      : cuenta.type;
+    celdaMonto.textContent = `Q ${cuenta.amount.toFixed(2)}`;
+    const botonEliminar = document.createElement('button');
+    botonEliminar.textContent = 'Eliminar';
+    botonEliminar.classList.add('small-btn');
+    botonEliminar.type = 'button';
+    botonEliminar.style.background = '#d32f2f';
+    botonEliminar.addEventListener('click', () => {
+      detalleCuentasInicial.splice(indice, 1);
+      renderizarDetalleCuentasInicial();
+      validarBotonGuardarBalanceInicial();
+    });
+    celdaAccion.appendChild(botonEliminar);
+    fila.appendChild(celdaCuenta);
+    fila.appendChild(celdaTipo);
+    fila.appendChild(celdaMonto);
+    fila.appendChild(celdaAccion);
+    tbodyCuentasInicial.appendChild(fila);
+  });
+  actualizarTotalesBalanceInicial();
+};
+
+const actualizarTotalesBalanceInicial = () => {
+  let totalDebe = 0, totalHaber = 0;
+  detalleCuentasInicial.forEach(cuenta => {
+    // Si el usuario eligió explícitamente el lado, usarlo
+    if (cuenta.side === 'debe') totalDebe += cuenta.amount;
+    else if (cuenta.side === 'haber') totalHaber += cuenta.amount;
+    // Si no, usar la naturaleza
+    else if (cuenta.type === 'Activo' || cuenta.type === 'Gasto') totalDebe += cuenta.amount;
+    else totalHaber += cuenta.amount;
+  });
+  totalDebeInicialElemento.textContent = totalDebe.toFixed(2);
+  totalHaberInicialElemento.textContent = totalHaber.toFixed(2);
+  diferenciaInicialElemento.textContent = (totalDebe - totalHaber).toFixed(2);
+};
+
+const validarBotonGuardarBalanceInicial = () => {
+  actualizarTotalesBalanceInicial();
+  // Solo habilitar si hay cuentas y el debe y haber cuadran
+  const totalDebe = parseFloat(totalDebeInicialElemento.textContent);
+  const totalHaber = parseFloat(totalHaberInicialElemento.textContent);
+  botonGuardarBalanceInicial.disabled = !(detalleCuentasInicial.length > 0 && Math.abs(totalDebe - totalHaber) < 0.01);
+};
+
+    [selectCuenta, inputMonto].forEach(el => el.addEventListener('input', validarInputsAgregarCuenta));
+    inputFechaAsiento.addEventListener('change', () => {
+      if (!inputFechaAsiento.value) errorFechaAsiento.style.display = 'block';
+      else errorFechaAsiento.style.display = 'none';
+      validarBotonGuardarAsiento();
+    });
+    inputDescripcionAsiento.addEventListener('input', validarBotonGuardarAsiento);
+    document.getElementById('new-account-form').addEventListener('submit', e => {
+      e.preventDefault();
+      const valor = document.getElementById('new-account-input').value.trim();
+      const tipo = document.getElementById('new-account-type').value;
+      if(valor.length < 2) {
+        alert('El nombre de la cuenta debe tener al menos 2 caracteres.');
+        return;
+      }
+      if(!tipo) {
+        alert('Debes seleccionar el tipo de cuenta.');
+        return;
+      }
+      if(cuentas.some(c => c.nombre.toLowerCase() === valor.toLowerCase())) {
+        alert('La cuenta ya existe.');
+        return;
+      }
+      cuentas.push({ nombre: valor, tipo: tipo });
+      cuentas.sort((a, b) => a.nombre.localeCompare(b.nombre));
+      guardarDatos();
+      llenarSelectCuentas();
+      llenarListaCuentas();
+      document.getElementById('new-account-input').value = '';
+      document.getElementById('new-account-type').value = '';
+    });
+    inicializar();
+    // --- GUARDAR BALANCE INICIAL ---
+    botonGuardarBalanceInicial.addEventListener('click', () => {
+      if (!inputFechaInicial.value || !inputDescripcionInicial.value.trim() || detalleCuentasInicial.length === 0) {
+        alert('Completa la fecha, descripción y agrega al menos una cuenta.');
+        return;
+      }
+      const totalDebe = parseFloat(totalDebeInicialElemento.textContent);
+      const totalHaber = parseFloat(totalHaberInicialElemento.textContent);
+      if (Math.abs(totalDebe - totalHaber) >= 0.01) {
+        alert('El balance inicial no está cuadrado.');
+        return;
+      }
+      // Guardar en localStorage
+      const balanceInicialObj = {
+        fecha: inputFechaInicial.value,
+        descripcion: inputDescripcionInicial.value.trim(),
+        cuentas: [...detalleCuentasInicial],
+        totalDebe,
+        totalHaber
+      };
+      localStorage.setItem('conta_initial_balance', JSON.stringify(balanceInicialObj));
+      // No limpiar los campos ni la tabla, solo deshabilitar el botón
+      botonGuardarBalanceInicial.disabled = true;
+      alert('¡Balance inicial guardado correctamente!');
+    });
+  })();
+  </script>
+</body>
+</html>
